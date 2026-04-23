@@ -18,11 +18,11 @@ classifiers = [
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Natural Language :: English",
@@ -68,7 +68,7 @@ local_scheme = "no-local-version"
 version_scheme = "python-simplified-semver"
 
 [tool.hatch.build.hooks.vcs]
-version-file = "src/hdx/python/pipelineutils/_version.py"
+version-file = "src/hdx/pipelineutils/_version.py"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/hdx"]
@@ -96,7 +96,7 @@ ignore = [
 ]
 
 [tool.ruff.lint.isort]
-known-local-folder = ["hdx.python.pipelineutils"]
+known-local-folder = ["hdx.pipelineutils"]
 known-third-party = [
     "hdx.api",
     "hdx.data",

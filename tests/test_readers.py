@@ -7,7 +7,7 @@ from hdx.utilities.dateparse import parse_date
 from hdx.utilities.downloader import Download
 from hdx.utilities.path import temp_dir
 
-from hdx.python.pipelineutils.reader import Read
+from hdx.pipelineutils.reader import Read
 
 
 class TestReaders:

@@ -1,10 +1,10 @@
 from hdx.location.adminlevel import AdminLevel
 
-from hdx.python.pipelineutils.hapi_admins import (
+from hdx.pipelineutils.hapi_admins import (
     complete_admins,
     pad_admins,
 )
-from hdx.python.pipelineutils.reader import Read
+from hdx.pipelineutils.reader import Read
 
 
 class TestAdmins:

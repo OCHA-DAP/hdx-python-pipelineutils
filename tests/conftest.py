@@ -8,8 +8,8 @@ from hdx.api.locations import Locations
 from hdx.location.country import Country
 from hdx.utilities.dateparse import parse_date
 
-from hdx.python.pipelineutils import string_params_to_dict
-from hdx.python.pipelineutils.reader import Read
+from hdx.pipelineutils import string_params_to_dict
+from hdx.pipelineutils.reader import Read
 
 
 @pytest.fixture(scope="session")

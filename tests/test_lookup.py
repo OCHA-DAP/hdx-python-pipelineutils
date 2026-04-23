@@ -1,5 +1,5 @@
-from hdx.python.pipelineutils.org_type import OrgType
-from hdx.python.pipelineutils.sector import Sector
+from hdx.pipelineutils.org_type import OrgType
+from hdx.pipelineutils.sector import Sector
 
 
 class TestLookup:

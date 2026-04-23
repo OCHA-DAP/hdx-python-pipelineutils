@@ -7,7 +7,7 @@ from hdx.utilities.matching import get_code_from_name
 from hdx.utilities.path import script_dir_plus_file
 from hdx.utilities.text import normalise
 
-from hdx.python.pipelineutils.reader import Read
+from hdx.pipelineutils.reader import Read
 
 logger = logging.getLogger(__name__)
 
