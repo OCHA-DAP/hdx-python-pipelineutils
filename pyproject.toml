@@ -40,18 +40,13 @@ dependencies = [
     "hdx-python-api>=6.6.7",
     "hdx-python-country>=4.1.1",
     "hdx-python-utilities>=4.0.8",
-    "libhxl",
-    "gspread",
-    "regex",
 ]
 
 [project.optional-dependencies]
-pandas = ["pandas>=2.3.3"]
 docs = ["mkapi"]
 
 [dependency-groups]
 dev = [
-    "pandas>=2.3.3",
     "pytest",
     "pytest-cov",
     "pre-commit",
