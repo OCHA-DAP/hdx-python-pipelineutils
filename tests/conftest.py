@@ -28,7 +28,6 @@ def configuration(fixtures, input_folder):
         hdx_read_only=True,
         hdx_site="prod",
         user_agent="test",
-        project_config_yaml=Path("tests") / "config" / "project_configuration.yaml",
     )
     Locations.set_validlocations(
         [
