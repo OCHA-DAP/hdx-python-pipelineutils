@@ -10,8 +10,8 @@ def complete_admins(
     fuzzy_match: bool = True,
 ) -> tuple[int, list[str]]:
     """Use information from adm_codes to populate adm_names and from
-    provider_adm_names to populate adm_codes with outptu of the admin level
-    and arnings for unknown and mismatched p-codes. All provided lists
+    provider_adm_names to populate adm_codes with output of the admin level
+    and warnings for unknown and mismatched p-codes. All provided lists
     should be of the same length.
 
     Args:
