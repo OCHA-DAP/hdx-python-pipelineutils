@@ -97,7 +97,6 @@ initial_lookup:
   hygiene: "WSH"
   hygiene assainissement: "WSH"
   intercluster: "Multi"  # From Somalia 3W, hopefully not to be confused with intersectoral
-  livelihood: "ERY"
   logement terre et biens: "PRO-HLP"
   logistica: "LOG"
   logistique: "LOG"
