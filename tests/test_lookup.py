@@ -7,6 +7,8 @@ class TestLookup:
         sector = Sector()
         assert sector.get_code("child protection") == "PRO-CPN"
         assert sector.get_code("gestion des sites daccueil temporaires") == "SHL"
+        assert sector.get_code("Cash multi-sectoriel") == "Cash"
+        assert sector.get_code("Abris et Non vivres") == "SHL"
         assert "Intersectoral" in sector.get_code_to_name()
         assert sector.get_name("PRO-MIN") == "Mine Action"
         assert sector.get_name("xxx") is None

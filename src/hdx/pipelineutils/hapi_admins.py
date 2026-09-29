@@ -38,11 +38,29 @@ def complete_admins(
             warnings.append(f"PCode unknown {adm_code}->''")
             return ""
 
+    def get_pcode_from_names(level: int) -> str | None:
+        # Exact matching only, so that a wrong parent does not scope the
+        # child lookup to the wrong area
+        pcode = None
+        for j in range(level + 1):
+            if adm_codes[j] in admins[j].pcodes:
+                pcode = adm_codes[j]
+            elif provider_adm_names[j]:
+                pcode, _ = admins[j].get_pcode(
+                    countryiso3,
+                    provider_adm_names[j],
+                    parent=pcode,
+                    fuzzy_match=False,
+                )
+            else:
+                pcode = None
+        return pcode
+
     for i, provider_adm_name in reversed(list(enumerate(provider_adm_names))):
         adm_code = adm_codes[i]
         parent = admins[i].pcode_to_parent.get(adm_code)
         if not parent and i > 0:
-            parent = adm_codes[i - 1]
+            parent = adm_codes[i - 1] or get_pcode_from_names(i - 1) or ""
         if not provider_adm_name:
             provider_adm_name = ""
             provider_adm_names[i] = ""
