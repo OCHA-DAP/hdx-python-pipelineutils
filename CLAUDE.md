@@ -37,7 +37,7 @@ Source lives under `src/hdx/pipelineutils/`:
 - **`org_type.py`** — `OrgType(Lookup)`: resolves organisation-type codes using `org_type_configuration.yaml`.
 - **`sector.py`** — `Sector(Lookup)`: resolves sector codes using `sector_configuration.yaml`.
 - **`hapi_admins.py`** — `complete_admins()`: populates adm-level names from p-codes and vice-versa using `hdx-python-country` `AdminLevel` objects; returns the resolved level and a list of warnings.
-- **`__init__.py`** — shared helpers: `string_params_to_dict`, `match_template` (extracts `{{...}}` placeholders), `get_startend_dates_from_time_period`.
+- **`__init__.py`** — shared helpers: `string_params_to_dict`, `get_startend_dates_from_time_period`.
 
 ## Testing
 
@@ -45,7 +45,7 @@ Tests are in `tests/` and use `pytest`. No live HDX connection is required — d
 
 ## Code Style
 
-Formatted and linted with `ruff` (rules: E, F, I, UP; line-length not enforced). Python ≥ 3.10. Use `X | Y` union syntax (PEP 604), not `Optional`/`Union`. Google-style docstrings with `Args:` and `Returns:` sections.
+Formatted and linted with `ruff` (rules: E, F, I, UP; line-length not enforced). Python ≥ 3.11. Use `X | Y` union syntax (PEP 604), not `Optional`/`Union`. Google-style docstrings with `Args:` and `Returns:` sections.
 
 ## Collaboration Style
 

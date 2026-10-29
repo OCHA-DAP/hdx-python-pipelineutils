@@ -1,9 +1,6 @@
-import re
 from datetime import datetime
 
 from hdx.data.dataset import Dataset
-
-template = re.compile("{{.*?}}")
 
 
 def string_params_to_dict(string: str) -> dict[str, str]:
@@ -14,22 +11,6 @@ def string_params_to_dict(string: str) -> dict[str, str]:
         name, par = name_par.strip().split(":")
         params[name] = par.strip()
     return params
-
-
-def match_template(input: str) -> tuple[str | None, str | None]:
-    """Try to match {{XXX}} in input string
-
-    Args:
-        input: String in which to look for template
-
-    Returns:
-        (Matched string with brackets, matched string without brackets)
-    """
-    match = template.search(input)
-    if match:
-        template_string = match.group()
-        return template_string, template_string[2:-2]
-    return None, None
 
 
 def get_startend_dates_from_time_period(

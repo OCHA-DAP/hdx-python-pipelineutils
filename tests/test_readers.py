@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import pytest
 from hdx.data.dataset import Dataset
@@ -12,8 +12,9 @@ from hdx.pipelineutils.reader import Read
 
 class TestReaders:
     def test_clone(self):
-        with Download(user_agent="test") as downloader:
-            with Read(
+        with (
+            Download(user_agent="test") as downloader,
+            Read(
                 downloader,
                 "fallback_dir",
                 "saved_dir",
@@ -22,12 +23,13 @@ class TestReaders:
                 use_saved=False,
                 prefix="population",
                 today=parse_date("2021-02-01"),
-            ) as reader:
-                clone_reader = reader.clone(downloader)
-                for property, value in vars(reader).items():
-                    if property == "downloader":
-                        continue
-                    assert getattr(clone_reader, property) == value
+            ) as reader,
+        ):
+            clone_reader = reader.clone(downloader)
+            for property, value in vars(reader).items():
+                if property == "downloader":
+                    continue
+                assert getattr(clone_reader, property) == value
 
     def test_read_dataset(self, configuration, monkeypatch):
         def read_from_hdx(dataset_name, _):
@@ -44,45 +46,47 @@ class TestReaders:
             dataset.add_update_resource(resource)
             return dataset
 
-        with temp_dir("TestReader") as temp_folder:
-            with Download(user_agent="test") as downloader:
-                munged_url = "https://docs.google.com/spreadsheets/d/1NjSI2LaS3SqbgYc0HdD8oIb7lofGtiHgoKKATCpwVdY/export?format=csv&gid=1088874596"
-                with Read(
-                    downloader,
-                    temp_folder,
-                    temp_folder,
-                    temp_folder,
-                    save=True,
-                    use_saved=False,
-                    prefix="test",
-                    today=parse_date("2021-02-01"),
-                ) as reader:
-                    monkeypatch.setattr(Dataset, "read_from_hdx", read_from_hdx)
-                    dataset_name = "None"
-                    dataset = reader.read_dataset(dataset_name)
-                    assert dataset is None
-                    dataset_name = "Test Dataset"
-                    dataset = reader.read_dataset(dataset_name)
-                    assert dataset["name"] == dataset_name
-                    assert dataset.get_resource()["url"] == munged_url
-                    monkeypatch.delattr(Dataset, "read_from_hdx")
-                with Read(
-                    downloader,
-                    temp_folder,
-                    temp_folder,
-                    temp_folder,
-                    save=False,
-                    use_saved=True,
-                    prefix="test",
-                    today=parse_date("2021-02-01"),
-                ) as reader:
-                    dataset_name = "None"
-                    dataset = reader.read_dataset(dataset_name)
-                    assert dataset is None
-                    dataset_name = "Test Dataset"
-                    dataset = reader.read_dataset(dataset_name)
-                    assert dataset["name"] == dataset_name
-                    assert dataset.get_resource()["url"] == munged_url
+        with (
+            temp_dir("TestReader") as temp_folder,
+            Download(user_agent="test") as downloader,
+        ):
+            munged_url = "https://docs.google.com/spreadsheets/d/1NjSI2LaS3SqbgYc0HdD8oIb7lofGtiHgoKKATCpwVdY/export?format=csv&gid=1088874596"
+            with Read(
+                downloader,
+                temp_folder,
+                temp_folder,
+                temp_folder,
+                save=True,
+                use_saved=False,
+                prefix="test",
+                today=parse_date("2021-02-01"),
+            ) as reader:
+                monkeypatch.setattr(Dataset, "read_from_hdx", read_from_hdx)
+                dataset_name = "None"
+                dataset = reader.read_dataset(dataset_name)
+                assert dataset is None
+                dataset_name = "Test Dataset"
+                dataset = reader.read_dataset(dataset_name)
+                assert dataset["name"] == dataset_name
+                assert dataset.get_resource()["url"] == munged_url
+                monkeypatch.delattr(Dataset, "read_from_hdx")
+            with Read(
+                downloader,
+                temp_folder,
+                temp_folder,
+                temp_folder,
+                save=False,
+                use_saved=True,
+                prefix="test",
+                today=parse_date("2021-02-01"),
+            ) as reader:
+                dataset_name = "None"
+                dataset = reader.read_dataset(dataset_name)
+                assert dataset is None
+                dataset_name = "Test Dataset"
+                dataset = reader.read_dataset(dataset_name)
+                assert dataset["name"] == dataset_name
+                assert dataset.get_resource()["url"] == munged_url
 
     def test_search_datasets(self, configuration, monkeypatch):
         filename = "TestDataset"
@@ -102,50 +106,50 @@ class TestReaders:
                 datasets.append(dataset)
             return datasets
 
-        with temp_dir("TestReader") as temp_folder:
-            with Download(user_agent="test") as downloader:
-                with Read(
-                    downloader,
-                    temp_folder,
-                    temp_folder,
-                    temp_folder,
-                    save=True,
-                    use_saved=False,
-                    prefix="test",
-                    today=parse_date("2021-02-01"),
-                ) as reader:
-                    monkeypatch.setattr(Dataset, "search_in_hdx", search_in_hdx)
-                    datasets = reader.search_datasets(filename)
-                    assert len(datasets) == 2
-                    dataset = datasets[0]
-                    assert dataset["name"] == f"{filename}_0"
-                    assert dataset.get_resource()["url"] == f"{filename}_0.json"
-                    dataset = datasets[1]
-                    assert dataset["name"] == f"{filename}_1"
-                    assert dataset.get_resource()["url"] == f"{filename}_1.json"
-                    monkeypatch.delattr(Dataset, "search_in_hdx")
-                with Read(
-                    downloader,
-                    temp_folder,
-                    temp_folder,
-                    temp_folder,
-                    save=False,
-                    use_saved=True,
-                    prefix="test",
-                    today=parse_date("2021-02-01"),
-                ) as reader:
-                    datasets = reader.search_datasets(filename)
-                    assert len(datasets) == 2
-                    dataset = datasets[0]
-                    assert dataset["name"] == f"{filename}_0"
-                    assert dataset.get_resource()["url"] == f"{filename}_0.json"
-                    dataset = datasets[1]
-                    assert dataset["name"] == f"{filename}_1"
-                    assert dataset.get_resource()["url"] == f"{filename}_1.json"
+        with (
+            temp_dir("TestReader") as temp_folder,
+            Download(user_agent="test") as downloader,
+        ):
+            with Read(
+                downloader,
+                temp_folder,
+                temp_folder,
+                temp_folder,
+                save=True,
+                use_saved=False,
+                prefix="test",
+                today=parse_date("2021-02-01"),
+            ) as reader:
+                monkeypatch.setattr(Dataset, "search_in_hdx", search_in_hdx)
+                datasets = reader.search_datasets(filename)
+                assert len(datasets) == 2
+                dataset = datasets[0]
+                assert dataset["name"] == f"{filename}_0"
+                assert dataset.get_resource()["url"] == f"{filename}_0.json"
+                dataset = datasets[1]
+                assert dataset["name"] == f"{filename}_1"
+                assert dataset.get_resource()["url"] == f"{filename}_1.json"
+                monkeypatch.delattr(Dataset, "search_in_hdx")
+            with Read(
+                downloader,
+                temp_folder,
+                temp_folder,
+                temp_folder,
+                save=False,
+                use_saved=True,
+                prefix="test",
+                today=parse_date("2021-02-01"),
+            ) as reader:
+                datasets = reader.search_datasets(filename)
+                assert len(datasets) == 2
+                dataset = datasets[0]
+                assert dataset["name"] == f"{filename}_0"
+                assert dataset.get_resource()["url"] == f"{filename}_0.json"
+                dataset = datasets[1]
+                assert dataset["name"] == f"{filename}_1"
+                assert dataset.get_resource()["url"] == f"{filename}_1.json"
 
     def test_read(self, configuration):
-        url = Read.get_url("http://{{var}}", var="hello")
-        assert url == "http://hello"
         datasetinfo = {
             "name": "test",
             "dataset": "sahel-humanitarian-needs-overview",
@@ -180,8 +184,8 @@ class TestReaders:
                 "hdx_provider_name": "OCHA West and Central Africa (ROWCA)",
                 "license": "[Creative Commons Attribution International](http://www.opendefinition.org/licenses/cc-by)",
                 "time_period": {
-                    "end": datetime(2016, 9, 1, 23, 59, 59, tzinfo=timezone.utc),
-                    "start": datetime(2016, 9, 1, 0, 0, tzinfo=timezone.utc),
+                    "end": datetime(2016, 9, 1, 23, 59, 59, tzinfo=UTC),
+                    "start": datetime(2016, 9, 1, 0, 0, tzinfo=UTC),
                 },
                 "title": "Sahel : Humanitarian Needs Overview",
             },
@@ -190,19 +194,19 @@ class TestReaders:
                 "name": "HNO -2017 -Sahel-nutrition.csv",
                 "format": "csv",
                 "hdx_id": "2527ac5b-66fe-46f0-8b9b-7086d2c4ddd3",
-                "update_date": datetime(2017, 3, 10, 10, 8, 37, tzinfo=timezone.utc),
+                "update_date": datetime(2017, 3, 10, 10, 8, 37, tzinfo=UTC),
             },
             "headers": 1,
             "name": "test",
             "source": "Multiple organisations",
             "source_date": {
-                "end": datetime(2016, 9, 1, 23, 59, 59, tzinfo=timezone.utc),
-                "start": datetime(2016, 9, 1, 0, 0, tzinfo=timezone.utc),
+                "end": datetime(2016, 9, 1, 23, 59, 59, tzinfo=UTC),
+                "start": datetime(2016, 9, 1, 0, 0, tzinfo=UTC),
             },
             "source_url": "https://data.humdata.org/dataset/sahel-humanitarian-needs-overview",
             "time_period": {
-                "end": datetime(2016, 9, 1, 23, 59, 59, tzinfo=timezone.utc),
-                "start": datetime(2016, 9, 1, 0, 0, tzinfo=timezone.utc),
+                "end": datetime(2016, 9, 1, 23, 59, 59, tzinfo=UTC),
+                "start": datetime(2016, 9, 1, 0, 0, tzinfo=UTC),
             },
             "url": "https://data.humdata.org/dataset/47f6ef46-500f-421a-9fa2-fefd93facf95/resource/2527ac5b-66fe-46f0-8b9b-7086d2c4ddd3/download/hno-2017-sahel-nutrition.csv",
         }
@@ -251,8 +255,8 @@ class TestReaders:
                 "hdx_provider_name": "OCHA West and Central Africa (ROWCA)",
                 "license": "[Creative Commons Attribution International](http://www.opendefinition.org/licenses/cc-by)",
                 "time_period": {
-                    "end": datetime(2016, 9, 1, 23, 59, 59, tzinfo=timezone.utc),
-                    "start": datetime(2016, 9, 1, 0, 0, tzinfo=timezone.utc),
+                    "end": datetime(2016, 9, 1, 23, 59, 59, tzinfo=UTC),
+                    "start": datetime(2016, 9, 1, 0, 0, tzinfo=UTC),
                 },
                 "title": "Sahel : Humanitarian Needs Overview",
             },
@@ -261,7 +265,7 @@ class TestReaders:
                 "name": "HNO-2017-Sahel- People in need.xlsx",
                 "format": "xlsx",
                 "hdx_id": "d9248be4-7bfb-4a81-a7aa-c035dcb737a2",
-                "update_date": datetime(2017, 3, 10, 10, 8, 37, tzinfo=timezone.utc),
+                "update_date": datetime(2017, 3, 10, 10, 8, 37, tzinfo=UTC),
             },
             "headers": 1,
             "name": "test",
@@ -269,13 +273,13 @@ class TestReaders:
             "sheet": 1,
             "source": "Multiple organisations",
             "source_date": {
-                "end": datetime(2016, 9, 1, 23, 59, 59, tzinfo=timezone.utc),
-                "start": datetime(2016, 9, 1, 0, 0, tzinfo=timezone.utc),
+                "end": datetime(2016, 9, 1, 23, 59, 59, tzinfo=UTC),
+                "start": datetime(2016, 9, 1, 0, 0, tzinfo=UTC),
             },
             "source_url": "https://data.humdata.org/dataset/sahel-humanitarian-needs-overview",
             "time_period": {
-                "end": datetime(2016, 9, 1, 23, 59, 59, tzinfo=timezone.utc),
-                "start": datetime(2016, 9, 1, 0, 0, tzinfo=timezone.utc),
+                "end": datetime(2016, 9, 1, 23, 59, 59, tzinfo=UTC),
+                "start": datetime(2016, 9, 1, 0, 0, tzinfo=UTC),
             },
             "url": "https://data.humdata.org/dataset/47f6ef46-500f-421a-9fa2-fefd93facf95/resource/d9248be4-7bfb-4a81-a7aa-c035dcb737a2/download/hno-2017-sahel-people-in-need.xlsx",
         }
