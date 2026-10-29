@@ -59,7 +59,7 @@ class Lookup:
 
         reader = Read.get_reader()
         datasetinfo = self._configuration["datasetinfo"]
-        headers, iterator = reader.read(
+        _headers, iterator = reader.read(
             datasetinfo, file_prefix=self._configuration["file_prefix"]
         )
         code_key = self._configuration["code_key"]

@@ -16,7 +16,7 @@ from hdx.utilities.retriever import Retrieve
 from hdx.utilities.saver import save_json
 from slugify import slugify
 
-from . import get_startend_dates_from_time_period, match_template
+from . import get_startend_dates_from_time_period
 
 logger = logging.getLogger(__name__)
 
@@ -68,8 +68,8 @@ class Read(Retrieve):
         temp_dir: Path | str,
         save: bool = False,
         use_saved: bool = False,
-        ignore: Sequence[str] = tuple(),
-        rate_limit: dict | None = {"calls": 1, "period": 0.1},
+        ignore: Sequence[str] = (),
+        rate_limit: dict | None = {"calls": 1, "period": 0.1},  # noqa: B006
         today: datetime | None = None,
         **kwargs: Any,
     ):
@@ -151,25 +151,6 @@ class Read(Retrieve):
         """
         return cls.get_retriever(name)
 
-    @staticmethod
-    def get_url(url: str, **kwargs: Any) -> str:
-        """Get url from a string replacing any template arguments
-
-        Args:
-            url: Url to read
-            **kwargs: Variables to use when evaluating template arguments
-
-        Returns:
-            Url with any template arguments replaced
-        """
-        for kwarg in kwargs:
-            globals()[kwarg] = kwargs[kwarg]
-        template_string, match_string = match_template(url)
-        if template_string:
-            replace_string = eval(match_string)
-            url = url.replace(template_string, replace_string)
-        return url
-
     def clone(self, downloader: Download) -> "Read":
         """Clone a given reader but use the given downloader
 
@@ -225,8 +206,6 @@ class Read(Retrieve):
         if compression:
             kwargs["compression"] = compression
         url = datasetinfo["url"]
-        if isinstance(url, list):
-            url = [self.get_url(x, **kwargs) for x in url]
         filename = kwargs.get("filename")
         if not filename:
             filename = datasetinfo.get("filename")
@@ -348,8 +327,7 @@ class Read(Retrieve):
         """
         filename = name.lower()
         file_type = f".{format}"
-        if filename.endswith(file_type):
-            filename = filename[: -len(file_type)]
+        filename = filename.removesuffix(file_type)
         return f"{slugify(filename, separator='_')}{file_type}"
 
     def construct_filename_and_download(
